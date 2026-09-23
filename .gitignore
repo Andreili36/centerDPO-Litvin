@@ -2,6 +2,7 @@
 bin/
 obj/
 
+*.pubxml.user
 *.csproj.user
 *.user
 *.suo
