@@ -1,0 +1,9 @@
+{
+  "database": {
+    "host": "10.36.26.5",
+    "port": 5432,
+    "name": "centerDPO_Litvin",
+    "user": "postgres",
+    "password": "postgres"
+  }
+}

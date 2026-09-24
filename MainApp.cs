@@ -2,11 +2,23 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace centerDPO
 {
 	public class MainApp
 	{
+        [DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll")]
+        private static extern bool FreeConsole();
+
+        [DllImport("user32.dll")]
+		private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+		private const int SW_HIDE = 0;
+
 		static List<Student> students = new List<Student>();
 		static List<Teacher> teachers = new List<Teacher>();
 		static List<ProgramInfo> programs = new List<ProgramInfo>();
@@ -16,8 +28,35 @@ namespace centerDPO
 		static readonly string teachersFile = "teachers.txt";
 		static readonly string programsFile = "programs.txt";
 
-		static void Main(string[] args)
+        [STAThread]
+        static void Main(string[] args)
 		{
+            AllocConsole();
+#if HAS_VIEW
+            Console.WriteLine("=========================================");
+			Console.WriteLine("  Обнаружен модуль графического интерфейса");
+			Console.WriteLine("  Выберите режим работы:");
+			Console.WriteLine("    1 — Графический интерфейс (GUI)");
+			Console.WriteLine("    2 — Терминал");
+			Console.WriteLine("=========================================");
+			Console.Write("Ваш выбор: ");
+
+			string? choice = Console.ReadLine();
+			if (choice == "1")
+			{
+                FreeConsole();
+
+				View.ViewLauncher.Run();
+				return;
+			}
+#endif
+
+            RunTerminalMode();
+		}
+
+        private static void RunTerminalMode()
+		{
+			Console.WriteLine("Запуск терминального режима...");
 			ImportData();
 
 			bool exit = false;
@@ -198,19 +237,19 @@ namespace centerDPO
 		static void ShowAll()
 		{
 			Console.WriteLine($"\nСтудентов: {students.Count}; " +
-							  $"Преподавателей: {teachers.Count}; " +
-							  $"Программ: {programs.Count}; " +
-							  $"Курсов: {courses.Count}");
+								$"Преподавателей: {teachers.Count}; " +
+								$"Программ: {programs.Count}; " +
+								$"Курсов: {courses.Count}");
 
 			Console.WriteLine("\n-- Студенты --");
 			foreach (var s in students)
 				Console.WriteLine($"  #{s.StudentId} {s.GetFullName()}, " +
-								  $"возраст: {s.GetAge()}");
+									$"возраст: {s.GetAge()}");
 
 			Console.WriteLine("\n-- Преподаватели --");
 			foreach (var t in teachers)
 				Console.WriteLine($"  #{t.TeacherId} {t.GetFullName()}, " +
-								  $"специализация: {t.Specialization}");
+									$"специализация: {t.Specialization}");
 
 			Console.WriteLine("\n-- Программы --");
 			foreach (var p in programs)
@@ -219,7 +258,7 @@ namespace centerDPO
 			Console.WriteLine("\n-- Курсы --");
 			foreach (var c in courses)
 				Console.WriteLine($"  #{c.CourseId} ({c.Program?.Name}), " +
-								  $"студентов: {c.Students.Count}/{c.MaxStudents}");
+									$"студентов: {c.Students.Count}/{c.MaxStudents}");
 		}
 
 		static void ImportData()

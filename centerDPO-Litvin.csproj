@@ -1,10 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>centerDPO-Litvin</AssemblyName>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net10.0</TargetFramework>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<RootNamespace>centerDPO</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="view/**/*.cs" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="Exists('view\view.csproj')">
+		<ProjectReference Include="view\view.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="Exists('view\view.csproj')">
+		<DefineConstants>$(DefineConstants);HAS_VIEW</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Npgsql" Version="10.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="app-config.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

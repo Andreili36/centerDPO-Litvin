@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="centerDPO-Litvin.csproj" />
+  <Project Path="view/view.csproj" />
 </Solution>
